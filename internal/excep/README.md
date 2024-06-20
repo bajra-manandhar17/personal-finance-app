@@ -1,0 +1,8 @@
+# Description
+
+This directory contains our custom exceptions that is used throughout our application.
+
+FORMAT: GENERAL_EXCEPTION_CODE or
+FORMAT: GENERAL_EXCEPTION_CODE.DOMAIN.DOMAIN_SPECIFIC_CODE or
+FORMAT: GENERAL_EXCEPTION_CODE.DOMAIN
+FORMAT: DOMAIN.DOMAIN_SPECIFIC_CODE
