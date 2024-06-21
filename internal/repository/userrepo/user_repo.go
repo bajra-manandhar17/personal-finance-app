@@ -3,18 +3,18 @@ package userrepo
 import (
 	"context"
 
-	"github.com/bajra-manandhar17/personal-finance-app/internal/model"
-	"gorm.io/gorm"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/model"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/query"
 )
 
 type UserRepo interface {
-	CreateUser(ctx context.Context, user *model.User) error
-	GetUser(ctx context.Context, userId string) (*model.User, error)
+	CreateUser(ctx context.Context, user *model.Users) error
+	GetUser(ctx context.Context, userId string) (*model.Users, error)
 	DoesEmailExist(ctx context.Context, email string) (bool, error)
 }
 
-func NewUserRepo(db *gorm.DB) UserRepo {
+func NewUserRepo(query *query.Query) UserRepo {
 	return &UserRepoImpl{
-		db: db,
+		query: query,
 	}
 }
