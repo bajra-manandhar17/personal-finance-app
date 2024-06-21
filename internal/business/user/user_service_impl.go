@@ -5,28 +5,30 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/model"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/query"
 	"github.com/bajra-manandhar17/personal-finance-app/internal/excep"
-	"github.com/bajra-manandhar17/personal-finance-app/internal/model"
-	"github.com/bajra-manandhar17/personal-finance-app/internal/repository/userrepo"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserServiceImpl struct {
-	userRepo *userrepo.UserRepo
+	query *query.Query
 }
 
 func (u *UserServiceImpl) RegisterNewUser(ctx context.Context, req RegisterNewUserReq) error {
-	if u.userRepo == nil {
-		log.Fatal("userRepo is not initialized in UserServiceImpl")
+	if u.query == nil {
+		log.Fatal("queries is not initialized in UserServiceImpl")
 	}
 
-	exists, err := (*u.userRepo).DoesEmailExist(ctx, req.Email)
+	userEmail := u.query.Users.Email
+
+	emailCount, err := u.newUserQuery(ctx).Where(userEmail.Eq(req.Email)).Count()
 	if err != nil {
 		return fmt.Errorf("error checking if email exists: %w", err)
 	}
 
-	if exists {
+	if emailCount > 0 {
 		return excep.DomainExcep{
 			Type:    excep.EXCEP_EMAIL_EXISTS,
 			Details: "Email already exists",
@@ -43,28 +45,34 @@ func (u *UserServiceImpl) RegisterNewUser(ctx context.Context, req RegisterNewUs
 		return fmt.Errorf("error generating user id: %w", err)
 	}
 
-	user := &model.User{
-		UserId:         userId.String(),
+	user := model.Users{
+		UserID:         userId.String(),
 		Email:          req.Email,
 		HashedPassword: string(hashedPassword),
 	}
 
-	if err := (*u.userRepo).CreateUser(ctx, user); err != nil {
+	if err := u.newUserQuery(ctx).Create(&user); err != nil {
 		return fmt.Errorf("error creating user: %w", err)
 	}
 
 	return nil
 }
 
-func (u *UserServiceImpl) GetUser(ctx context.Context, userId string) (*model.User, error) {
-	if u.userRepo == nil {
+func (u *UserServiceImpl) GetUser(ctx context.Context, userId string) (*model.Users, error) {
+	if u.query == nil {
 		log.Fatal("userRepo is not initialized in UserServiceImpl")
 	}
 
-	userInfo, err := (*u.userRepo).GetUser(ctx, userId)
+	userID := u.query.Users.UserID
+
+	userInfo, err := u.newUserQuery(ctx).Where(userID.Eq(userId)).First()
 	if err != nil {
 		return nil, fmt.Errorf("error getting user: %w", err)
 	}
 
 	return userInfo, nil
+}
+
+func (u *UserServiceImpl) newUserQuery(ctx context.Context) query.IUsersDo {
+	return u.query.Users.WithContext(ctx)
 }

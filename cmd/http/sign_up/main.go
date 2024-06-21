@@ -8,8 +8,8 @@ import (
 
 	"github.com/bajra-manandhar17/personal-finance-app/internal/business/user"
 	"github.com/bajra-manandhar17/personal-finance-app/internal/config"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/query"
 	"github.com/bajra-manandhar17/personal-finance-app/internal/helper/httphelper"
-	"github.com/bajra-manandhar17/personal-finance-app/internal/repository/userrepo"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -27,11 +27,9 @@ func init() {
 	}
 
 	postgresDbProvider = localPostgresDbProvider
+	query := query.Use(postgresDbProvider)
 
-	userRepo := userrepo.NewUserRepo(postgresDbProvider)
-	userService = user.NewUserService(&user.UserServiceOpts{
-		UserRepo: &userRepo,
-	})
+	userService = user.NewUserService(query)
 }
 
 func handler(request *http.Request) (httphelper.HttpResponse, error) {
