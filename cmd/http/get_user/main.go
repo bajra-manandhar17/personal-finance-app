@@ -1,4 +1,4 @@
-package sign_up
+package get_user
 
 import (
 	"context"
@@ -39,19 +39,17 @@ func init() {
 func handler(request *http.Request) (httphelper.HttpResponse, error) {
 	ctx := request.Context()
 
-	var reqData user.RegisterNewUserReq
-	if err := httphelper.MapAndValidateBody(request.Body, &reqData); err != nil {
+	userId := request.URL.Query().Get("userId")
+
+	res, err := userService.GetUser(ctx, userId)
+	if err != nil {
 		return httphelper.MapErrorToApiResponse(err)
 	}
 
-	if err := userService.RegisterNewUser(ctx, reqData); err != nil {
-		return httphelper.MapErrorToApiResponse(err)
-	}
-
-	return httphelper.PrepareApiResponse(nil)
+	return httphelper.PrepareApiResponse(res)
 }
 
-func RegisterNewUserHandler(c *gin.Context) {
+func GetUserHandler(c *gin.Context) {
 	httpResp, _ := handler(c.Request)
 
 	// Unmarshal the JSON response body

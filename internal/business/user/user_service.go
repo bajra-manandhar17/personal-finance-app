@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/bajra-manandhar17/personal-finance-app/internal/db/model"
-	"github.com/bajra-manandhar17/personal-finance-app/internal/db/query"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/repository/userrepo"
 )
 
 type UserService interface {
@@ -17,16 +17,16 @@ type RegisterNewUserReq struct {
 	Password string `json:"password" validate:"required,min=8"`
 }
 
-// type UserServiceOpts struct {
-// 	UserRepo *userrepo.UserRepo
-// }
+type UserServiceOpts struct {
+	UserRepo *userrepo.UserRepo
+}
 
-func NewUserService(query *query.Query) UserService {
-	if query == nil {
+func NewUserService(opts *UserServiceOpts) UserService {
+	if opts == nil {
 		return &UserServiceImpl{}
 	}
 
 	return &UserServiceImpl{
-		query: query,
+		userRepo: opts.UserRepo,
 	}
 }

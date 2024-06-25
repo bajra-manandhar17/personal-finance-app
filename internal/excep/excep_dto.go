@@ -12,12 +12,14 @@ type HttpExcep struct {
 }
 
 var exceptionTypeToHttpStatus = map[string]int{
-	EXCEP_USER_NOT_FOUND:        http.StatusNotFound,
-	EXCEP_EMAIL_EXISTS:          http.StatusConflict,
 	EXCEP_UNAUTHORIZED:          http.StatusUnauthorized,
 	EXCEP_INVALID_PAYLOAD:       http.StatusBadRequest,
 	EXCEP_FORBIDDEN:             http.StatusForbidden,
 	EXCEP_INTERNAL_SERVER_ERROR: http.StatusInternalServerError,
+
+	// Custom exceptions
+	EXCEP_USER_NOT_FOUND: http.StatusNotFound,
+	EXCEP_EMAIL_EXISTS:   http.StatusConflict,
 }
 
 func MapErrorToHttpException(err error) HttpExcep {

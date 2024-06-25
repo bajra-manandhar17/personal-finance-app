@@ -10,6 +10,7 @@ import (
 type UserRepo interface {
 	CreateUser(ctx context.Context, user *model.Users) error
 	GetUser(ctx context.Context, userId string) (*model.Users, error)
+	DoesUserExist(ctx context.Context, userId string) (bool, error)
 	DoesEmailExist(ctx context.Context, email string) (bool, error)
 }
 

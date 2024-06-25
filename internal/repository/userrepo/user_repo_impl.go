@@ -29,6 +29,15 @@ func (u *UserRepoImpl) GetUser(ctx context.Context, userId string) (*model.Users
 	return user, nil
 }
 
+func (u *UserRepoImpl) DoesUserExist(ctx context.Context, userId string) (bool, error) {
+	count, err := u.newUserQuery(ctx).Where(u.query.Users.UserID.Eq(userId)).Count()
+	if err != nil {
+		return false, fmt.Errorf("error checking if user exists: %w", err)
+	}
+
+	return count > 0, nil
+}
+
 func (u *UserRepoImpl) DoesEmailExist(ctx context.Context, email string) (bool, error) {
 	count, err := u.newUserQuery(ctx).Where(u.query.Users.Email.Eq(email)).Count()
 	if err != nil {
