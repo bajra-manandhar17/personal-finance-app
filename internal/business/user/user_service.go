@@ -3,13 +3,13 @@ package user
 import (
 	"context"
 
-	"github.com/bajra-manandhar17/personal-finance-app/internal/model"
+	"github.com/bajra-manandhar17/personal-finance-app/internal/db/model"
 	"github.com/bajra-manandhar17/personal-finance-app/internal/repository/userrepo"
 )
 
 type UserService interface {
 	RegisterNewUser(ctx context.Context, req RegisterNewUserReq) error
-	GetUser(ctx context.Context, userId string) (*model.User, error)
+	GetUser(ctx context.Context, userId string) (*model.Users, error)
 }
 
 type RegisterNewUserReq struct {
